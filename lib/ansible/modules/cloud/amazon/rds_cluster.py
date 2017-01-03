@@ -119,7 +119,7 @@ options:
       - Boolean value to enable/disable ApplyImmediately. If enabled modifications will be applied as soon as possible rather than waiting for the next preferred maintenance window.
     required: false
     default: false
-  db_cluster_snapshot_identifer:
+  db_cluster_snapshot_identifier:
     description:
       - The identifier of the DB cluster snapshot. Used with command=snapshot
     required: false
@@ -525,7 +525,7 @@ def get_db_cluster_snapshot(client, module, cluster_snapshot_name=None):
     if cluster_snapshot_name:
         params['DBClusterSnapshotIdentifier'] = cluster_snapshot_name
     else:
-        params['DBClusterSnapshotIdentifier'] = module.params.get('db_cluster_snapshot_identifer')
+        params['DBClusterSnapshotIdentifier'] = module.params.get('db_cluster_snapshot_identifier')
 
     try:
         response = client.describe_db_cluster_snapshots(**params)
@@ -616,7 +616,7 @@ def modify_db_cluster(client, module):
 
 def snapshot_db_cluster(client, module):
     changed = False
-    required_vars = ['db_cluster_snapshot_identifer','db_cluster_identifier']
+    required_vars = ['db_cluster_snapshot_identifier','db_cluster_identifier']
     valid_vars = ['tags']
 
     params = validate_parameters(required_vars, valid_vars, module)
@@ -674,8 +674,8 @@ def restore_db_cluster_from_snapshot(client, module):
 
 def delete_db_cluster_or_snapshot(client, module):
     changed = False
-    if module.params.get('db_cluster_snapshot_identifer'):
-        required_vars =['db_cluster_snapshot_identifer'] 
+    if module.params.get('db_cluster_snapshot_identifier'):
+        required_vars =['db_cluster_snapshot_identifier'] 
         valid_vars = []
         params = validate_parameters(required_vars, valid_vars, module)
     else:
@@ -683,7 +683,7 @@ def delete_db_cluster_or_snapshot(client, module):
         valid_vars = ['final_db_snapshot_identifier', 'skip_final_snapshot']
         params = validate_parameters(required_vars, valid_vars, module)
 
-    if module.params.get('db_cluster_snapshot_identifer'):
+    if module.params.get('db_cluster_snapshot_identifier'):
         #check if the db cluster exists before attempting to delete it
         db_cluster_snapshot = get_db_cluster_snapshot(client, module, module.params.get('DBClusterSnapshotIdentifier'))
         if not db_cluster_snapshot:
@@ -734,7 +734,7 @@ def validate_parameters(required_vars, valid_vars, module):
         'database_name': 'DatabaseName',
         'db_cluster_identifier': 'DBClusterIdentifier',
         'db_cluster_parameter_group_name': 'DBClusterParameterGroupName',
-        'db_cluster_snapshot_identifer': 'DBClusterSnapshotIdentifier',
+        'db_cluster_snapshot_identifier': 'DBClusterSnapshotIdentifier',
         'vpc_security_group_ids': 'VpcSecurityGroupIds',
         'new_db_cluster_identifier': 'NewDBClusterIdentifier',
         'db_subnet_group_name': 'DBSubnetGroupName',
@@ -788,7 +788,7 @@ def main():
         db_cluster_identifier=dict(required=False),
         new_db_cluster_identifier=dict(required=False),
         db_cluster_parameter_group_name=dict(required=False),
-        db_cluster_snapshot_identifer=dict(required=False),
+        db_cluster_snapshot_identifier=dict(required=False),
         vpc_security_group_ids=dict(type='list', required=False),
         db_subnet_group_name=dict(required=False),  
         engine=dict(choices=['aurora'], required=False),
